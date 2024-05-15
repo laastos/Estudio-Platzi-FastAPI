@@ -12,11 +12,11 @@ app.version: str = "0.0.1"
 def message():
     return HTMLResponse(content="<h1>Welcome to my API</h1>", status_code=status.HTTP_200_OK)
 
-@app.get('/movies', tags=["movies"], response_model=List[Movie])
+@app.get('/movies', tags=["movies"], response_model=List[Movie], status_code=status.HTTP_200_OK)
 def message() -> List[Movie]:
     return JSONResponse(content={"data": [movie.model_dump() for movie in movies]}, status_code=status.HTTP_200_OK)
 
-@app.get('/movies/{id}', tags=['movies'], response_model=Movie)
+@app.get('/movies/{id}', tags=['movies'], response_model=Movie, status_code=status.HTTP_200_OK)
 def get_movie(id: int = Path(ge=1, le=2000, description="The ID of the movie you want to get")) -> Movie:
     item = [i for i in movies if i.id == id]
     if len(item) > 0:
@@ -24,7 +24,7 @@ def get_movie(id: int = Path(ge=1, le=2000, description="The ID of the movie you
     else:
         return JSONResponse(content={"message": "Item not found"}, status_code=status.HTTP_404_NOT_FOUND)
 
-@app.get('/movies/', tags=['movies'], response_model=List[Movie])
+@app.get('/movies/', tags=['movies'], response_model=List[Movie], status_code=status.HTTP_200_OK)
 def get_movies_by_category(category: str = Query(min_length=3, max_length=15, description="The category of the movies you want to get")) -> List[Movie]:
     item = [i for i in movies if (i.category == category)]
     if len(item) > 0:
@@ -32,12 +32,12 @@ def get_movies_by_category(category: str = Query(min_length=3, max_length=15, de
     else:
         return JSONResponse(content={"message": "Movie not found"}, status_code=status.HTTP_404_NOT_FOUND)
 
-@app.post('/movies', tags=['movies'], response_model=dict)
+@app.post('/movies', tags=['movies'], response_model=dict, status_code=status.HTTP_201_CREATED)
 def add_movie(movie: Movie):
     movies.append(movie.model_dump())
     return JSONResponse(content={"message": "Movie added"}, status_code=status.HTTP_201_CREATED)
 
-@app.put('/movies/{id}', tags=['movies'], response_model=dict)
+@app.put('/movies/{id}', tags=['movies'], response_model=dict, status_code=status.HTTP_200_OK)
 def update_movie(id: int, movie: Movie):
     for i in range(len(movies)):
         if movies[i].id == id:
@@ -45,7 +45,7 @@ def update_movie(id: int, movie: Movie):
             return JSONResponse(content={"message": "Movie updated"}, status_code=status.HTTP_200_OK)
     return JSONResponse(content={"message": "Movie not found"}, status_code=status.HTTP_404_NOT_FOUND)
 
-@app.delete('/movies/{id}', tags=['movies'], response_model=dict)
+@app.delete('/movies/{id}', tags=['movies'], response_model=dict, status_code=status.HTTP_200_OK)
 def delete_movie(id: int):
     item = [i for i in movies if i.id == id]
     if len(item) > 0:
